@@ -46,12 +46,12 @@ client.on('play',function(data){
 client.on('pause',function(data){
 	if (omxProcess){
 		omxProcess.stdin.write("p");
-		omxProcess = null;
 	}
 });
 
 client.on('stop',function(data){
 	if (omxProcess){
 		omxProcess.stdin.write("q");
+		omxProcess = null;		
 	}
 });
