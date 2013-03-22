@@ -34,7 +34,7 @@ client.on('play',function(data){
 	var time = new Date();
 	console.log(time.getTime());
 	console.log('Client ::  will launch play script, received @ '+time.getTime());
-	omxProcess = spawn(__dirname+'/play.sh '+clientData.video);
+	omxProcess = exec(__dirname+'/play.sh '+clientData.video);
 	omxProcess.stdout.on('data', function (data) {
  		console.log('stdout : '+data);
 	});
@@ -45,12 +45,13 @@ client.on('play',function(data){
 
 client.on('pause',function(data){
 	if (omxProcess){
-		omxProcess.stdin.send("q");
+		omxProcess.stdin.write("p");
 		omxProcess = null;
 	}
 });
 
 client.on('stop',function(data){
-	if (omxProcess)
-	omxProcess.stdin.send("q");
+	if (omxProcess){
+		omxProcess.stdin.write("q");
+	}
 });
