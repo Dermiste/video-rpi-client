@@ -15,7 +15,7 @@ function launchShellScript(pFileName){
 	console.log(time.getTime());
 	console.log('Client ::  will launch "'+pFileName+'" script, received @ '+time.getTime());
 	var child;
-	child = exec(__dirname+'/'+pFileName+clientData.video);
+	child = exec(__dirname+'/'+pFileName+' '+clientData.video);
 	child.stdout.on('data', function (data) {
  		console.log('stdout : '+data);
 	});
