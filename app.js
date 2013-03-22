@@ -10,6 +10,20 @@ var exec = require('child_process').exec;
 
 //console.log(config);
  
+function launchShellScript(pFileName){
+	var time = new Date();
+	console.log(time.getTime());
+	console.log('Client ::  will launch "'+pFileName+'" script, received @ '+time.getTime());
+	var child;
+	child = exec(__dirname+'/'+pFileName+clientData.video);
+	child.stdout.on('data', function (data) {
+ 		console.log('stdout : '+data);
+	});
+	child.stderr.on('data', function (data) {
+ 		console.log('stderr : '+data);
+	});	
+} 
+ 
 var client = ioClient.connect(config.serverIP+':'+config.serverPort);
 client.on('connect', function () {
 	console.log('Client ::  connected!');
@@ -31,16 +45,13 @@ client.on('broadcast',function(data){
 });
 
 client.on('play',function(data){
-	var time = new Date();
-	console.log(time.getTime());
-	console.log('Client ::  play received @ '+time.getTime()+' Lauching shell script');
-	console.log(__dirname+'/run.sh '+clientData.video);
-	var child;
-	child = exec(__dirname+'/run.sh '+clientData.video);
-	child.stdout.on('data', function (data) {
- 		console.log('stdout : '+data);
-	});
-	child.stderr.on('data', function (data) {
- 		console.log('stderr : '+data);
-	});	
+	launchShellScript('play');
+});
+
+client.on('pause',function(data){
+	launchShellScript('pause');
+});
+
+client.on('stop',function(data){
+	launchShellScript('stop');
 });
