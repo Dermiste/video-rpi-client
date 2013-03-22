@@ -7,24 +7,10 @@ var config = require(__dirname+'/config.json');
 var clientData = require(__dirname+'/clientData.json');
 
 var exec = require('child_process').exec;
-
-//console.log(config);
- 
-function launchShellScript(pFileName){
-	var time = new Date();
-	console.log(time.getTime());
-	console.log('Client ::  will launch "'+pFileName+'." script, received @ '+time.getTime());
-	var child;
-	child = exec(__dirname+'/'+pFileName+'.sh '+clientData.video);
-	child.stdout.on('data', function (data) {
- 		console.log('stdout : '+data);
-	});
-	child.stderr.on('data', function (data) {
- 		console.log('stderr : '+data);
-	});	
-} 
  
 var client = ioClient.connect(config.serverIP+':'+config.serverPort);
+
+var omxProcess;
 client.on('connect', function () {
 	console.log('Client ::  connected!');
 
@@ -45,13 +31,26 @@ client.on('broadcast',function(data){
 });
 
 client.on('play',function(data){
-	launchShellScript('play');
+	var time = new Date();
+	console.log(time.getTime());
+	console.log('Client ::  will launch play script, received @ '+time.getTime());
+	omxProcess = exec(__dirname+'/play.sh '+clientData.video);
+	omxProcess.stdout.on('data', function (data) {
+ 		console.log('stdout : '+data);
+	});
+	omxProcess.stderr.on('data', function (data) {
+ 		console.log('stderr : '+data);
+	});	
 });
 
 client.on('pause',function(data){
-	launchShellScript('pause');
+	if (omxProcess){
+		omxProcess.send("q");
+		omxProcess = null;
+	}
 });
 
 client.on('stop',function(data){
-	launchShellScript('stop');
+	if (omxProcess)
+	omxProcess.send("q");
 });
